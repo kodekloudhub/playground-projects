@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: retail-frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: retail-frontend
+  template:
+    metadata:
+      labels:
+        app: retail-frontend
+    spec:
+      containers:
+        - name: application
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          workingDir: /app
+          command: ["/bin/sh", "-c"]
+          args: ["pip install --no-cache-dir -r requirements.txt && python app.py"]
+          ports:
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+            - name: code
+              mountPath: /app/app.py
+              subPath: app.py
+            - name: code
+              mountPath: /app/requirements.txt
+              subPath: requirements.txt
+            - name: templates
+              mountPath: /app/templates
+      volumes:
+        - name: code
+          configMap:
+            name: retail-code
+        - name: templates
+          configMap:
+            name: retail-templates

@@ -1,0 +1,97 @@
+---
+# BACKEND WORKLOAD (Payment Processor)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-processor
+  template:
+    metadata:
+      labels:
+        app: payment-processor
+    spec:
+      containers:
+      - name: api
+        image: python:3.10-slim
+        command: ["/bin/sh", "-c", "pip install flask requests && python /app/backend_api.py"]
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: code-volume
+          mountPath: /app
+      volumes:
+      - name: code-volume
+        configMap:
+          name: app-source-codes
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-svc
+spec:
+  selector:
+    app: payment-processor
+  ports:
+  - port: 5000
+    targetPort: 5000
+
+---
+# FRONTEND WORKLOAD (Store UI)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-frontend
+  template:
+    metadata:
+      labels:
+        app: web-frontend
+    spec:
+      containers:
+      - name: ui
+        image: python:3.10-slim
+        command: ["/bin/sh", "-c", "pip install flask requests && python /app/storefront.py"]
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: code-volume
+          mountPath: /app
+      volumes:
+      - name: code-volume
+        configMap:
+          name: app-source-codes
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+spec:
+  type: NodePort
+  selector:
+    app: web-frontend
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30080
+
+---
+# ROGUE ATTACKER POD
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rogue-attacker
+  labels:
+    app: rogue
+spec:
+  containers:
+  - name: attacker
+    image: alpine/curl
+    command: ["sleep", "3600"]

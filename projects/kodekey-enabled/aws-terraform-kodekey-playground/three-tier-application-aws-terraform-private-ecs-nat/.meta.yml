@@ -1,0 +1,9 @@
+slug: three-tier-application-aws-terraform-private-ecs-nat
+title: Secure Three-Tier AI Application on AWS with Private ECS and NAT Gateway
+playground: AWS Terraform | KodeKey Playground
+group: KodeKey Enabled
+status: active
+difficulty: advanced
+playground_link: https://kodekloud.com/playgrounds/playground-terraform-aws
+mapped_lab_env: TBD
+clickup_page: 13h9cc-139416

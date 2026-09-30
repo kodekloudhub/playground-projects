@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-engine-v1
+  labels:
+    app: payment-processor
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payment-processor
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: payment-processor
+        version: v1
+    spec:
+      containers:
+      - name: server
+        image: nginx:alpine
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "echo '<h1>PAYMENT GATEWAY V1.0 (PROD)</h1>' > /usr/share/nginx/html/index.html"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-engine-v2
+  labels:
+    app: payment-processor
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-processor
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: payment-processor
+        version: v2
+    spec:
+      containers:
+      - name: server
+        image: nginx:alpine
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "echo '<h1>PAYMENT GATEWAY V2.0 (CANARY-RC)</h1>' > /usr/share/nginx/html/index.html"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    name: http
+  selector:
+    app: payment-processor

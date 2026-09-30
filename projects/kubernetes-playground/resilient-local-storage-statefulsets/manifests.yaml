@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlite-headless
+  labels:
+    app: sqlite-db
+spec:
+  ports:
+  - port: 80
+    name: dummy
+  clusterIP: None
+  selector:
+    app: sqlite-db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: local-db
+spec:
+  serviceName: sqlite-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sqlite-db
+  template:
+    metadata:
+      labels:
+        app: sqlite-db
+    spec:
+      containers:
+      - name: sqlite
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - apk add --no-cache sqlite;
+            mkdir -p /data;
+            tail -f /dev/null
+        volumeMounts:
+        - name: sqlite-storage
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: sqlite-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 1Gi

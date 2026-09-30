@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Status</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 flex items-center justify-center h-screen">
+    <div class="bg-white p-10 rounded-2xl shadow-lg border border-gray-100 max-w-lg text-center">
+        {% if status == 'Success' %}
+            <div class="text-green-500 text-6xl mb-4">✓</div>
+            <h1 class="text-3xl font-black text-gray-900 mb-2">Order Confirmed</h1>
+            <p class="text-gray-500 mb-6">Your payment was successfully processed.</p>
+        {% else %}
+            <div class="text-red-500 text-6xl mb-4">✗</div>
+            <h1 class="text-3xl font-black text-gray-900 mb-2">Checkout Failed</h1>
+            <p class="text-gray-500 mb-6">Payment processor declined the transaction. Check Kibana logs.</p>
+        {% endif %}
+        <div class="bg-gray-100 p-4 rounded-lg text-left mb-8 break-all">
+            <span class="text-xs text-gray-400 uppercase font-bold">Transaction ID (Trace ID)</span><br>
+            <span class="font-mono text-gray-700 font-bold">{{ tx_id }}</span>
+        </div>
+        <a href="/" class="block w-full bg-gray-200 text-gray-700 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-300 transition">Return to Storefront</a>
+    </div>
+</body>
+</html>

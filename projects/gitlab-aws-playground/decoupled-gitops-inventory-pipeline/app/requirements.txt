@@ -1,0 +1,4 @@
+Flask==3.0.0
+Werkzeug==3.0.0
+boto3==1.34.0
+psutil==5.9.6

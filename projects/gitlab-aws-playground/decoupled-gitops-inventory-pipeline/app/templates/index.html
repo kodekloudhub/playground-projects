@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Native Inventory Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-black text-light">
+    <div class="container py-4">
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+            <h2 class="text-primary mb-0">Inventory Operations Center</h2>
+            <span class="badge bg-secondary">Backend: Amazon DynamoDB</span>
+        </header>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header border-secondary text-info fw-bold">Active Compute Node (ALB Routing)</div>
+                    <div class="card-body">
+                        <p class="mb-1"><strong>EC2 Instance ID:</strong> <span class="badge bg-warning text-dark">{{ meta.id }}</span></p>
+                        <p class="mb-1"><strong>Availability Zone:</strong> <span class="text-info">{{ meta.az }}</span></p>
+                        <p class="mb-2"><strong>Private IP Address:</strong> {{ meta.ip }}</p>
+                        <small class="text-secondary">Refresh the browser to verify traffic distribution across healthy ASG instances.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header border-secondary text-info fw-bold">Live Node Utilization</div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-1"><span>CPU Utilization:</span><span>{{ stats.cpu }}%</span></div>
+                        <div class="progress mb-3" style="height: 10px;"><div class="progress-bar bg-info" style="width: {{ stats.cpu }}%"></div></div>
+                        <div class="d-flex justify-content-between mb-1"><span>RAM Utilization:</span><span>{{ stats.mem }}%</span></div>
+                        <div class="progress" style="height: 10px;"><div class="progress-bar bg-success" style="width: {{ stats.mem }}%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-dark border-secondary mb-4">
+            <div class="card-header border-secondary text-success fw-bold">Create New Inventory Item</div>
+            <div class="card-body">
+                <form action="/items" method="POST" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" name="item_id" class="form-control bg-black text-light border-secondary" placeholder="SKU ID (e.g. SRV-909)" required>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" name="name" class="form-control bg-black text-light border-secondary" placeholder="Item Name" required>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="category" class="form-select bg-black text-light border-secondary">
+                            <option value="Compute">Compute</option>
+                            <option value="Storage">Storage</option>
+                            <option value="Networking">Networking</option>
+                            <option value="Security">Security</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <input type="number" name="stock" class="form-control bg-black text-light border-secondary" placeholder="Qty" value="1" required>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-success w-100">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary text-light fw-bold">Persistent Inventory Records</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Item SKU</th>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Stock Status</th>
+                                <th style="width: 250px;">Update Stock</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td class="fw-bold">{{ item.item_id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td><span class="badge bg-secondary">{{ item.category }}</span></td>
+                                <td>
+                                    {% if item.stock < 10 %}
+                                        <span class="badge bg-danger">{{ item.stock }} units (Low)</span>
+                                    {% else %}
+                                        <span class="badge bg-success">{{ item.stock }} units</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form action="/items/update" method="POST" class="d-flex gap-2">
+                                        <input type="hidden" name="item_id" value="{{ item.item_id }}">
+                                        <input type="number" name="stock" class="form-control form-control-sm bg-black text-light border-secondary" value="{{ item.stock }}" style="width: 90px;" required>
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">Update</button>
+                                    </form>
+                                </td>
+                                <td class="text-end">
+                                    <form action="/items/delete/{{ item.item_id }}" method="POST" onsubmit="return confirm('Delete this record?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+stages:
+  - build
+  - deploy
+  - validate
+
+package_and_upload:
+  stage: build
+  script:
+    - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+    - BUCKET_NAME="gitops-artifacts-${ACCOUNT_ID}"
+    - aws s3 mb s3://${BUCKET_NAME} || true
+    - cd app && zip -r ../latest.zip app.py templates requirements.txt && cd ..
+    - aws s3 cp latest.zip s3://${BUCKET_NAME}/latest.zip
+
+deploy_infrastructure:
+  stage: deploy
+  script:
+    - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+    - BUCKET_NAME="gitops-artifacts-${ACCOUNT_ID}"
+    - |
+      if aws cloudformation describe-stacks --stack-name GitOps-Dynamo-Stack > /dev/null 2>&1; then
+        STACK_EXISTS=true
+        echo "Existing stack detected. Will perform Instance Refresh after deploy."
+      else
+        STACK_EXISTS=false
+        echo "First-time deployment detected. Will skip Instance Refresh."
+      fi
+    - echo "Deploying CloudFormation Stack..."
+    - aws cloudformation deploy --template-file infrastructure/template.yaml --stack-name GitOps-Dynamo-Stack --parameter-overrides ArtifactBucket=${BUCKET_NAME} --capabilities CAPABILITY_NAMED_IAM
+    - |
+      if [ "$STACK_EXISTS" = true ]; then
+        echo "Triggering Auto Scaling Group Instance Refresh for Zero-Downtime Deployment..."
+        ASG_NAME=$(aws cloudformation describe-stack-resources --stack-name GitOps-Dynamo-Stack --query "StackResources[?ResourceType=='AWS::AutoScaling::AutoScalingGroup'].PhysicalResourceId" --output text)
+        aws autoscaling start-instance-refresh --auto-scaling-group-name $ASG_NAME --preferences '{"InstanceWarmup": 180, "MinHealthyPercentage": 50}'
+        echo "Waiting for Instance Refresh to complete..."
+        while true; do
+          STATUS=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name $ASG_NAME --query "InstanceRefreshes[0].Status" --output text)
+          if [ "$STATUS" == "Successful" ]; then echo "Refresh successful!"; break; fi
+          if [ "$STATUS" == "Failed" ] || [ "$STATUS" == "Cancelled" ]; then echo "Refresh failed!"; exit 1; fi
+          echo "Refresh in progress... Status: $STATUS"
+          sleep 30
+        done
+      fi
+
+automated_validation:
+  stage: validate
+  script:
+    - echo "Retrieving ALB Public Endpoint..."
+    - ALB_DNS=$(aws cloudformation describe-stacks --stack-name GitOps-Dynamo-Stack --query "Stacks[0].Outputs[?OutputKey=='ALBDnsName'].OutputValue" --output text)
+    - echo "Target endpoint is http://${ALB_DNS}"
+    - echo "Polling ALB until instances are healthy..."
+    - |
+      HEALTHY=false
+      for i in $(seq 1 40); do
+        if curl -sf "http://${ALB_DNS}" | grep -q "Inventory Operations Center"; then
+          echo "UI is up and healthy!"
+          HEALTHY=true
+          break
+        fi
+        echo "Waiting 20 seconds... (Attempt $i/40)"
+        sleep 20
+      done
+      if [ "$HEALTHY" != "true" ]; then
+        echo "ERROR: ALB never returned a healthy response after 40 attempts"
+        exit 1
+      fi
+    - echo "Test 2 - Create a record via HTTP POST..."
+    - curl -sf -X POST -d "item_id=CI-TEST-99&name=Pipeline-Verified-Node&category=Security&stock=42" "http://${ALB_DNS}/items"
+    - echo "Test 3 - Verify item appears in DynamoDB scan..."
+    - |
+      FOUND=false
+      for attempt in $(seq 1 15); do
+        sleep 5
+        if curl -sf "http://${ALB_DNS}" | grep -q "CI-TEST-99"; then
+          echo "CI-TEST-99 found in UI!"
+          FOUND=true
+          break
+        fi
+        echo "Item not yet visible, retrying... (Attempt $attempt/15)"
+      done
+      if [ "$FOUND" != "true" ]; then
+        echo "ERROR: CI-TEST-99 was not found in the UI after 15 attempts"
+        exit 1
+      fi
+    - echo "End-to-End Validation Successful!"

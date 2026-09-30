@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: app
+          image: python:3.11-slim
+          command: ["/bin/sh", "-c", "pip install --no-cache-dir -r /app/requirements.txt && python /app/app.py"]
+          volumeMounts:
+            - name: code
+              mountPath: /app
+            - name: templates
+              mountPath: /app/templates
+      volumes:
+        - name: code
+          configMap:
+            name: frontend-code
+        - name: templates
+          configMap:
+            name: frontend-templates
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart-service
+spec:
+  selector:
+    app: cart
+  ports:
+    - port: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cart
+  template:
+    metadata:
+      labels:
+        app: cart
+    spec:
+      containers:
+        - name: app
+          image: python:3.11-slim
+          command: ["/bin/sh", "-c", "pip install --no-cache-dir -r /app/requirements.txt && python /app/app.py"]
+          volumeMounts:
+            - name: code
+              mountPath: /app
+      volumes:
+        - name: code
+          configMap:
+            name: cart-code
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+spec:
+  selector:
+    app: payment
+  ports:
+    - port: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - name: app
+          image: python:3.11-slim
+          command: ["/bin/sh", "-c", "pip install --no-cache-dir -r /app/requirements.txt && python /app/app.py"]
+          volumeMounts:
+            - name: code
+              mountPath: /app
+      volumes:
+        - name: code
+          configMap:
+            name: payment-code

@@ -1,0 +1,5 @@
+apiVersion: v2
+name: retail-frontend
+description: A custom retail web application with Prometheus observability
+version: 0.1.0
+appVersion: "1.0"

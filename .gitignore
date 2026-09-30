@@ -1,0 +1,4 @@
+.DS_Store
+.clickup_cache/
+*.tmp
+__pycache__/

@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seatsync-redis-deploy
+  labels:
+    tier: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seatsync-cache
+  template:
+    metadata:
+      labels:
+        app: seatsync-cache
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cache
+  labels:
+    tier: cache
+spec:
+  type: ClusterIP
+  selector:
+    app: seatsync-cache
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seatsync-backend-deploy
+  labels:
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seatsync-backend
+  template:
+    metadata:
+      labels:
+        app: seatsync-backend
+    spec:
+      containers:
+        - name: api
+          image: kodekloud/seatsync-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: REDIS_HOST
+              value: redis-cache
+            - name: REDIS_PORT
+              value: "6379"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  labels:
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: seatsync-backend
+  ports:
+    - port: 8000
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seatsync-frontend-deploy
+  labels:
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seatsync-frontend
+  template:
+    metadata:
+      labels:
+        app: seatsync-frontend
+    spec:
+      containers:
+        - name: web
+          image: kodekloud/seatsync-web:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: BACKEND_URL
+              value: http://backend-service:8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: seatsync-frontend
+  ports:
+    - port: 3000
+      targetPort: 3000

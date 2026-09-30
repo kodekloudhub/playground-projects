@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  monolith-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: rideshare
+    ports:
+      - "5430:5432"
+    volumes:
+      - ./init-monolith.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sharding-net
+
+  shard-0-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: rideshare_shard0
+    ports:
+      - "5431:5432"
+    volumes:
+      - ./init-shard.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sharding-net
+
+  shard-1-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: rideshare_shard1
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-shard.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sharding-net
+
+networks:
+  sharding-net:
+    external: true

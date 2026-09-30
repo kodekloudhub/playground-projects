@@ -1,0 +1,33 @@
+---
+- name: Bootstrap Web Tier
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Ensure Nginx is installed
+      ansible.builtin.package:
+        name: nginx
+        state: present
+
+    - name: Remove default Nginx Debian page
+      ansible.builtin.file:
+        path: /var/www/html/index.nginx-debian.html
+        state: absent
+
+    - name: Deploy dynamic index.html template
+      ansible.builtin.template:
+        src: templates/index.html.j2
+        dest: /var/www/html/index.html
+        mode: '0644'
+
+    - name: Ensure Nginx service is started and enabled
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Create baseline deployer user
+      ansible.builtin.user:
+        name: deployer
+        state: present
+        create_home: yes
+        shell: /bin/bash

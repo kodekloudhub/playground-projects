@@ -1,0 +1,39 @@
+# Catalog changes — 2026-09-30
+
+## ➕ Added (36)
+- **Automating Web Deployments with Ansible** (Ansible Playground) `automating-web-deployments-ansible` — ⚠️ needs `mapped_lab_env`
+- **Database Sharding and Data Migration** (Docker Playground) `database-sharding-and-data-migration` — ⚠️ needs `mapped_lab_env`
+- **Automated Dependency Guardrail** (Docker Playground) `automated-dependency-guardrail` — ⚠️ needs `mapped_lab_env`
+- **Service Mesh Traffic Engineering** (Istio Playground) `service-mesh-traffic-engineering` — ⚠️ needs `mapped_lab_env`
+- **Resilient Local Storage with StatefulSets** (Kubernetes Playground) `resilient-local-storage-statefulsets` — ⚠️ needs `mapped_lab_env`
+- **Microservices Application Deployment** (Kubernetes Playground) `microservices-application-deployment` — ⚠️ needs `mapped_lab_env`
+- **Monolith to Microservices** (Kubernetes Playground) `monolith-to-microservices` — ⚠️ needs `mapped_lab_env`
+- **Automated Cloud Foundation** (AWS Terraform Playground) `automated-cloud-foundation` — ⚠️ needs `mapped_lab_env`
+- **Multi-Node High Availability** (Ubuntu Playground) `multi-node-high-availability` — ⚠️ needs `mapped_lab_env`
+- **Identity & Dynamic Secret Engines** (Vault Playground) `identity-and-dynamic-secrets-engine` — ⚠️ needs `mapped_lab_env`
+- **Config-Based Arch Workspace** (Arch Linux Playground) `config-based-arch-workspace` — ⚠️ needs `mapped_lab_env`
+- **End-to-End CICD Microservice Pipeline** (Full CI/CD Playground) `end-to-end-cicd-microservice-pipeline` — ⚠️ needs `mapped_lab_env`
+- **Web Application Traffic Monitoring** (Prometheus Helm Playground) `web-application-traffic-monitoring` — ⚠️ needs `mapped_lab_env`
+- **Centralized Log Aggregation and Analysis with EFK** (Kubernetes EFK Playground) `centralized-log-aggregation-efk` — ⚠️ needs `mapped_lab_env`
+- **Decoupled GitOps Inventory Pipeline** (GitLab | AWS Playground) `decoupled-gitops-inventory-pipeline` — ⚠️ needs `mapped_lab_env`
+- **Cloud Cost Pulse — Real-Time FinOps Lakehouse** (Jupyter | AWS Playground) `cloud-cost-pulse-realtime-finops-lakehouse` — ⚠️ needs `mapped_lab_env`
+- **Smart Customer Email Triage with AI** (N8N | KodeKey Playground) `smart-customer-email-triage-ai` — ⚠️ needs `mapped_lab_env`
+- **ResumeRadar - Import and Run** (N8N | KodeKey Playground) `n8n-resume-radar-import` — ⚠️ needs `mapped_lab_env`
+- **Autonomous SecOps Agent** (Kubernetes | KodeKey Playground) `autonomous-secops-agent` — ⚠️ needs `mapped_lab_env`
+- **Secure Three-Tier AI Application on AWS with Private ECS and NAT Gateway** (AWS Terraform | KodeKey Playground) `three-tier-application-aws-terraform-private-ecs-nat` — ⚠️ needs `mapped_lab_env`
+- **Type-Safe Financial Extraction Engine** (Python | KodeKey Playground) `type-safe-financial-extraction-engine` — ⚠️ needs `mapped_lab_env`
+- **Cloud Cost Pulse — Real-Time FinOps Lakehouse** (AWS | KodeKey) `cloud-cost-pulse-realtime-finops-lakehouse-2` — ⚠️ needs `mapped_lab_env`
+- **Enterprise HR Database Audit** (MySQL Playground) `enterprise-hr-database-audit` — ⚠️ needs `mapped_lab_env`
+- **MongoDB Access Control and Least Privilege Hardening** (MongoDB Playground) `mongodb-access-control-and-least-privilege-hardening` — ⚠️ needs `mapped_lab_env`
+- **PostgREST Multi-Tenant Security with PostgreSQL RLS** (PostgreSQL Playground) `postgrest-rls-lab` — ⚠️ needs `mapped_lab_env`
+- **Relational Database Initialization and Schema Design** (MariaDB Playground) `relational-database-initialization-and-schema-design` — ⚠️ needs `mapped_lab_env`
+- **In-Memory Caching for Latency Reduction and API Rate Limiting** (Redis Playground) `in-memory-caching-for-latency-reduction-and-api-rate-limiting` — ⚠️ needs `mapped_lab_env`
+- **Streaming Chat Over WebSockets (No Framework)** (Node JS Playground) `streaming-chat-websockets` — ⚠️ needs `mapped_lab_env`
+- **Image Thumbnail Farm (worker_threads Pool)** (Node JS Playground) `image-thumbnail-farm-worker-threads` — ⚠️ needs `mapped_lab_env`
+- **Memory Leak Hunt** (Node JS Playground) `memory-leak-hunt` — ⚠️ needs `mapped_lab_env`
+- **Event Loop Time Machine (Predict → Run → Diff CLI)** (Node JS Playground) `event-loop-time-machine` — ⚠️ needs `mapped_lab_env`
+- **Starvation Detector** (Node JS Playground) `starvation-detector-event-loop` — ⚠️ needs `mapped_lab_env`
+- **Cloud-Native E-Commerce WASM Storefront with AWS Serverless Backend** (WASM | AWS Playground) `cloud-native-ecommerce-wasm-microservice-engine` — ⚠️ needs `mapped_lab_env`
+- **Zero-Trust Micro-Segmentation with Calico** (Kubernetes With Calico Playground) `zero-trust-micro-segmentation-with-calico` — ⚠️ needs `mapped_lab_env`
+- **Secure CI/CD with Self-Hosted Agents** (Azure DevOps Playground) `secure-cicd-self-hosted-agents` — ⚠️ needs `mapped_lab_env`
+- **ReleaseForge — Governed AWS Infrastructure Delivery** (AWS | Azure DevOps Playground) `releaseforge-governed-aws-infrastructure-delivery` — ⚠️ needs `mapped_lab_env`
