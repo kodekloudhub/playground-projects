@@ -1,0 +1,13 @@
+cloud_cost_pulse:
+  target: prod
+  outputs:
+    prod:
+      type: postgres
+      host: RDS_ENDPOINT
+      user: RDS_USER
+      password: RDS_PASSWORD
+      port: 5432
+      dbname: finops
+      schema: analytics
+      threads: 2
+      sslmode: require

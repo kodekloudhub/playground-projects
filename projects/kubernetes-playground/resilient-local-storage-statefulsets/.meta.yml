@@ -1,9 +1,0 @@
-slug: resilient-local-storage-statefulsets
-title: Resilient Local Storage with StatefulSets
-playground: Kubernetes Playground
-group: 
-status: active
-difficulty: intermediate
-playground_link: https://kodekloud.com/playgrounds/playground-kubernetes-single-node-latest
-mapped_lab_env: TBD
-clickup_page: 13h9cc-135996

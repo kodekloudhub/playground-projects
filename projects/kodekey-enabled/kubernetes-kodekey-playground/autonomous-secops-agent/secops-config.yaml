@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: secops-agent-config
+data:
+  TARGET_NAMESPACE: "default"
+  LABEL_SELECTOR: "app=web-gateway"
+  AI_MODEL_NAME: "gpt-6-luna"
+  NOTIFIER_URL: "http://ops-notifier-svc/message"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: secops-agent-secret
+type: Opaque
+data:
+  ai-api-key: $(printf %s "$KK_API_KEY" | base64 -w 0)
+  ai-base-url: $(printf %s "$KK_BASE_URL" | base64 -w 0)
+  gotify-token: $(printf %s "$GOTIFY_SERVER_TOKEN" | base64 -w 0)

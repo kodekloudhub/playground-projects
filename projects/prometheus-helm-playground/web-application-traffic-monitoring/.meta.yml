@@ -1,9 +1,0 @@
-slug: web-application-traffic-monitoring
-title: Web Application Traffic Monitoring
-playground: Prometheus Helm Playground
-group: 
-status: active
-difficulty: intermediate
-playground_link: https://kodekloud.com/playgrounds/playground-prometheus-with-helm
-mapped_lab_env: TBD
-clickup_page: 13h9cc-142276

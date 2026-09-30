@@ -1,0 +1,95 @@
+services:
+  kafka:
+    image: apache/kafka:3.9.0
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+  airflow-init:
+    build: .
+    env_file: .env
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://RDS_USER:RDS_PASSWORD@RDS_ENDPOINT:5432/airflow_meta
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./dbt:/opt/airflow/dbt
+      - ./consumer:/opt/airflow/consumer
+    command: >-
+      bash -c "airflow db migrate && airflow users create --username $AIRFLOW_ADMIN_USERNAME --password $AIRFLOW_ADMIN_PASSWORD --firstname FinOps --lastname Operator --role Admin --email finops@example.invalid || true"
+
+  airflow-scheduler:
+    build: .
+    env_file: .env
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://RDS_USER:RDS_PASSWORD@RDS_ENDPOINT:5432/airflow_meta
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./dbt:/opt/airflow/dbt
+      - ./consumer:/opt/airflow/consumer
+    command: scheduler
+
+  airflow-dag-processor:
+    build: .
+    env_file: .env
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://RDS_USER:RDS_PASSWORD@RDS_ENDPOINT:5432/airflow_meta
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./dbt:/opt/airflow/dbt
+      - ./consumer:/opt/airflow/consumer
+    command: dag-processor
+
+  airflow-apiserver:
+    build: .
+    env_file: .env
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://RDS_USER:RDS_PASSWORD@RDS_ENDPOINT:5432/airflow_meta
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./dbt:/opt/airflow/dbt
+      - ./consumer:/opt/airflow/consumer
+    command: api-server --port 8080
+
+  kafka-consumer:
+    build: .
+    env_file: .env
+    depends_on:
+      kafka:
+        condition: service_started
+    volumes:
+      - ./consumer:/opt/airflow/consumer
+    command: python /opt/airflow/consumer/consumer.py
+
+volumes:
+  kafka-data:

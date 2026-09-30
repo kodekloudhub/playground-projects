@@ -1,0 +1,35 @@
+name: Automated Dependency Guardrail
+
+on: [push]
+
+jobs:
+  security-gate:
+    name: Dependency Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Artifacts
+        uses: actions/checkout@v3
+
+      - name: Execute Resilient Containerized Scan
+        run: |
+          cleanup() {
+            docker rm -f t-scanner > /dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          docker create --name t-scanner \
+            --entrypoint /bin/sh \
+            ghcr.io/aquasecurity/trivy:latest \
+            -c "tail -f /dev/null"
+          docker start t-scanner
+          docker cp . t-scanner:/src
+
+          docker exec t-scanner trivy fs /src \
+            --format cyclonedx \
+            --output /src/sbom.json
+          docker cp t-scanner:/src/sbom.json .
+
+          docker exec t-scanner trivy fs /src \
+            --severity HIGH,CRITICAL \
+            --exit-code 1 \
+            --format table

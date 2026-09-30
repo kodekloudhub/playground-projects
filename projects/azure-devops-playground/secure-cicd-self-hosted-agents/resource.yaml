@@ -1,0 +1,89 @@
+trigger:
+  - main
+
+stages:
+  - stage: Build
+    displayName: 'Build (CI)'
+    pool:
+      name: 'self-hosted-pool'
+    jobs:
+      - job: BuildJob
+        displayName: 'Package Application'
+        steps:
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: '$(Build.SourcesDirectory)'
+              Contents: 'index.html'
+              TargetFolder: '$(Build.ArtifactStagingDirectory)/drop'
+            displayName: 'Stage Application Files'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/drop'
+              ArtifactName: 'app-artifact'
+            displayName: 'Publish Build Artifact'
+
+  - stage: Deploy
+    displayName: 'Deploy (CD)'
+    dependsOn: Build
+    pool:
+      name: 'self-hosted-pool'
+    jobs:
+      - job: DeployJob
+        displayName: 'Deploy to Azure'
+        steps:
+          - task: DownloadBuildArtifacts@1
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'app-artifact'
+              downloadPath: '$(System.ArtifactsDirectory)'
+            displayName: 'Download Build Artifact'
+
+          - task: AzureCLI@2
+            displayName: 'Deploy Static Website to Azure Storage'
+            inputs:
+              azureSubscription: 'azure-arm-connection'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                echo "========================================"
+                echo "  Deploy Stage: Azure Static Website"
+                echo "========================================"
+
+                RG_NAME=$(az group list --query "[0].name" -o tsv)
+                # Generate a deterministic, globally unique name using a hash of the resource group
+                HASH=$(echo -n "$RG_NAME" | md5sum | head -c 16)
+                STORAGE_NAME="cicdlab${HASH}"
+
+                echo "Ensuring Storage Account exists: $STORAGE_NAME"
+                az storage account create \
+                  --name "$STORAGE_NAME" \
+                  --resource-group "$RG_NAME" \
+                  --sku Standard_LRS \
+                  --kind StorageV2 \
+                  --allow-blob-public-access true
+
+                echo "Enabling static website hosting..."
+                az storage blob service-properties update \
+                  --account-name "$STORAGE_NAME" \
+                  --static-website \
+                  --index-document index.html
+
+                echo "Uploading application files..."
+                CONN_STRING=$(az storage account show-connection-string \
+                  --name "$STORAGE_NAME" --resource-group "$RG_NAME" -o tsv)
+                az storage blob upload-batch \
+                  --connection-string "$CONN_STRING" \
+                  --source "$(System.ArtifactsDirectory)/app-artifact" \
+                  --destination '$web' \
+                  --overwrite
+
+                SITE_URL=$(az storage account show \
+                  --name "$STORAGE_NAME" \
+                  --query "primaryEndpoints.web" -o tsv)
+
+                echo "========================================"
+                echo "  DEPLOYMENT SUCCESSFUL!"
+                echo "  Live URL: $SITE_URL"
+                echo "========================================"

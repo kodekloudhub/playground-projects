@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-gateway-target
+  labels:
+    app: web-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-gateway
+  template:
+    metadata:
+      labels:
+        app: web-gateway
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-gateway-svc
+spec:
+  type: NodePort
+  selector:
+    app: web-gateway
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ops-notifier
+  labels:
+    app: ops-notifier
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ops-notifier
+  template:
+    metadata:
+      labels:
+        app: ops-notifier
+    spec:
+      containers:
+        - name: gotify
+          image: gotify/server:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: GOTIFY_DEFAULTUSER_PASS
+              value: "SecOpsAdmin2026!"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ops-notifier-svc
+spec:
+  selector:
+    app: ops-notifier
+  ports:
+    - port: 80
+      targetPort: 80

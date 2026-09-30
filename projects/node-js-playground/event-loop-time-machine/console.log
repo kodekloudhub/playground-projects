@@ -1,0 +1,2 @@
+  const { diffOrder, printDiff } = require('./diff');
+  printDiff(diffOrder(predicted, actual));

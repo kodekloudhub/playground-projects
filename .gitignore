@@ -1,4 +1,8 @@
 .DS_Store
 .clickup_cache/
-*.tmp
 __pycache__/
+*.tmp
+# local sync bookkeeping — not part of the public code repo
+catalog.csv
+CATALOG.md
+CHANGES.md

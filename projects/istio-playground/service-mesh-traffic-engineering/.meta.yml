@@ -1,9 +1,0 @@
-slug: service-mesh-traffic-engineering
-title: Service Mesh Traffic Engineering
-playground: Istio Playground
-group: 
-status: active
-difficulty: advanced
-playground_link: https://kodekloud.com/playgrounds/playground-k8s-with-istio
-mapped_lab_env: TBD
-clickup_page: 13h9cc-136056

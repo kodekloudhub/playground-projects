@@ -1,9 +1,0 @@
-slug: cloud-native-ecommerce-wasm-microservice-engine
-title: Cloud-Native E-Commerce WASM Storefront with AWS Serverless Backend
-playground: WASM | AWS Playground
-group: 
-status: draft
-difficulty: advanced
-playground_link: ['https://kodekloud.com/cloud-playgrounds/aws', 'https://kodekloud.com/playgrounds/playground-wasm']
-mapped_lab_env: TBD
-clickup_page: 13h9cc-145096

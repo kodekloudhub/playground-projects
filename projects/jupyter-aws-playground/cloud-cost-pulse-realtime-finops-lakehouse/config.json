@@ -1,0 +1,1 @@
+{"event_id":"evt_01JXYZ","event_time":"2026-09-09T06:30:00Z","received_at":"2026-09-09T06:30:04Z","team":"payments","service":"checkout-api","environment":"production","region":"us-east-1","customer_id":"cust_042","usage_type":"request","quantity":1842,"unit":"requests","schema_version":"1.0"}

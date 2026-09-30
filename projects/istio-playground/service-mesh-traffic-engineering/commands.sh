@@ -33,14 +33,6 @@ sort /home/admin/canary-results.txt | uniq -c
 POD_IP=$(kubectl get pod -l app=payment-processor,version=v1 -o jsonpath='{.items[0].status.podIP}')
 echo "Targeting production pod IP: $POD_IP"
 
-if kubectl exec client-test -c client-test -- curl -sS --connect-timeout 3 "http://$POD_IP" > /home/admin/plaintext-attempt.txt 2>&1; then
-  echo "Unexpected HTTP response:"
-  cat /home/admin/plaintext-attempt.txt
-else
-  echo "Plaintext request rejected as expected"
-fi
-cat /home/admin/plaintext-attempt.txt
-
 kubectl get namespace default -o jsonpath='{.metadata.labels.istio-injection}'
 kubectl get deployment payment-engine-v1 -o jsonpath='{.status.readyReplicas}'
 kubectl get deployment payment-engine-v2 -o jsonpath='{.status.readyReplicas}'

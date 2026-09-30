@@ -1,9 +1,0 @@
-slug: centralized-log-aggregation-efk
-title: Centralized Log Aggregation and Analysis with EFK
-playground: Kubernetes EFK Playground
-group: 
-status: active
-difficulty: advanced
-playground_link: https://kodekloud.com/playgrounds/playground-k8s-with-efk
-mapped_lab_env: TBD
-clickup_page: 13h9cc-142656

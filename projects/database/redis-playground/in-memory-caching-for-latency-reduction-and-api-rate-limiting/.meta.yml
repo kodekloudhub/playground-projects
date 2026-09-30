@@ -1,9 +1,0 @@
-slug: in-memory-caching-for-latency-reduction-and-api-rate-limiting
-title: In-Memory Caching for Latency Reduction and API Rate Limiting
-playground: Redis Playground
-group: Database
-status: active
-difficulty: intermediate
-playground_link: TBD
-mapped_lab_env: TBD
-clickup_page: 13h9cc-145476

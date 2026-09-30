@@ -1,9 +1,0 @@
-slug: postgrest-rls-lab
-title: PostgREST Multi-Tenant Security with PostgreSQL RLS
-playground: PostgreSQL Playground
-group: Database
-status: active
-difficulty: advanced
-playground_link: https://kodekloud.com/playgrounds/playground-postgresql
-mapped_lab_env: TBD
-clickup_page: 13h9cc-142956

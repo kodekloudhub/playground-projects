@@ -1,0 +1,17 @@
+name: cloud_cost_pulse
+version: 1.0.0
+config-version: 2
+profile: cloud_cost_pulse
+model-paths: [models]
+test-paths: [tests]
+models:
+  cloud_cost_pulse:
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: analytics
+      +materialized: table
+    gold:
+      +schema: analytics
+      +materialized: incremental
