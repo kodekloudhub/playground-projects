@@ -1,0 +1,429 @@
+{
+  "id": "kkResumeRadarWeb1",
+  "name": "ResumeRadar (web)",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "httpMethod": [
+          "GET",
+          "POST"
+        ],
+        "path": "resumeradar",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "web-ui",
+      "name": "Web UI",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// The whole web UI, served by n8n. Edit the markup here and it is live on the\n// next request - there is nothing to build and nowhere to deploy it.\n// The page posts back to its own URL, so it works on the test and the\n// production webhook without knowing either address.\n\nconst html = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>ResumeRadar</title>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap\">\n<style>\n  :root {\n    --ink:#0a1120; --surface:#101a2c; --inset:#0c1524; --line:#1f3050;\n    --text:#e9eff8; --muted:#8ba0bd;\n    --kk-blue:#2b7fff; --kk-cyan:#3ec9de;\n    --brand:linear-gradient(90deg,#2b7fff,#3ec9de);\n    --gap:#fb7185; --have:#34d399;\n    --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif;\n    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;\n    --pad:clamp(18px,3vw,26px);\n  }\n  * { box-sizing:border-box; }\n  html { -webkit-text-size-adjust:100%; }\n  body { margin:0; background:var(--ink); color:var(--text);\n         font-family:var(--sans); font-size:16px; line-height:1.55;\n         -webkit-font-smoothing:antialiased; }\n  h1,h2,h3 { text-wrap:balance; margin:0; }\n  a { color:var(--kk-cyan); }\n  :focus-visible { outline:2px solid var(--kk-cyan); outline-offset:2px;\n                   border-radius:6px; }\n\n  /* ---------- brand bar ---------- */\n  .topbar { position:sticky; top:0; z-index:5; background:rgba(10,17,32,.88);\n            backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }\n  .topbar::after { content:''; display:block; height:1px; background:var(--brand);\n                   opacity:.7; }\n  .bar { max-width:980px; margin:0 auto; padding:12px 20px;\n         display:flex; align-items:center; gap:14px; }\n  .mark { width:28px; height:28px; flex:0 0 28px; border-radius:8px; }\n  .brandname { font-weight:600; letter-spacing:-.2px; }\n  .divider { width:1px; height:18px; background:var(--line); }\n  .product { font-family:var(--mono); font-size:12px; font-weight:500;\n             letter-spacing:.12em; text-transform:uppercase; color:var(--kk-cyan); }\n  .getkey { margin-left:auto; font-family:var(--mono); font-size:12px;\n            letter-spacing:.06em; text-transform:uppercase; color:var(--muted);\n            text-decoration:none; border:1px solid var(--line);\n            padding:7px 13px; border-radius:8px; }\n  .getkey:hover { color:var(--text); border-color:var(--kk-cyan); }\n\n  /* ---------- shell ---------- */\n  main { max-width:980px; margin:0 auto; padding:40px 20px 96px; }\n  .hero { margin-bottom:32px; }\n  .hero h1 { font-size:clamp(30px,5vw,42px); font-weight:700;\n             letter-spacing:-1.2px; }\n  .hero p { margin:10px 0 0; color:var(--muted); max-width:56ch; }\n  .pill { display:inline-flex; align-items:center; gap:8px; margin-top:18px;\n          padding:6px 14px; border-radius:999px; background:var(--brand);\n          font-family:var(--mono); font-size:11px; font-weight:600;\n          letter-spacing:.14em; text-transform:uppercase; color:#fff; }\n\n  .eyebrow { margin:0 0 10px; font-family:var(--mono); font-size:11px;\n             font-weight:600; letter-spacing:.14em; text-transform:uppercase;\n             color:var(--muted); }\n  .panel { background:var(--surface); border:1px solid var(--line);\n           border-radius:14px; padding:var(--pad); }\n\n  /* ---------- form ---------- */\n  form { display:grid; gap:20px; }\n  input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }\n  .drop { display:flex; align-items:baseline; gap:10px; cursor:pointer;\n          background:var(--inset); border:1px dashed var(--line);\n          border-radius:10px; padding:15px 16px; color:var(--muted); }\n  .drop:hover { border-color:var(--kk-cyan); }\n  input[type=file]:focus-visible + .drop { outline:2px solid var(--kk-cyan);\n          outline-offset:2px; }\n  .drop b { color:var(--text); font-weight:600; }\n  .drop span { font-family:var(--mono); font-size:13px; }\n  textarea { width:100%; min-height:168px; resize:vertical;\n             font-family:var(--sans); font-size:15px; color:var(--text);\n             background:var(--inset); border:1px solid var(--line);\n             border-radius:10px; padding:13px 14px; }\n  textarea::placeholder { color:var(--muted); }\n  .go { padding:14px; border:0; border-radius:10px; background:var(--brand);\n        color:#fff; font-family:var(--sans); font-size:15px; font-weight:600;\n        cursor:pointer; }\n  .go:disabled { background:#1c2c46; color:var(--muted); cursor:progress; }\n  .status { min-height:20px; font-family:var(--mono); font-size:13px;\n            color:var(--muted); }\n  .status.err { color:var(--gap); }\n\n  /* ---------- report (markup comes from the workflow) ---------- */\n  .report { display:grid; gap:16px; margin-top:32px; }\n  .summary { display:flex; align-items:center; gap:22px; flex-wrap:wrap;\n             background:var(--surface); border:1px solid var(--line);\n             border-radius:14px; padding:var(--pad); }\n  .ring { --pct:0; flex:0 0 92px; width:92px; height:92px; border-radius:50%;\n          display:grid; place-items:center;\n          background:conic-gradient(from -90deg,\n                     var(--kk-blue) 0, var(--kk-cyan) calc(var(--pct)*1%),\n                     #17253c calc(var(--pct)*1%)); }\n  .ring::after { content:attr(data-label); width:70px; height:70px;\n                 border-radius:50%; background:var(--surface);\n                 display:grid; place-items:center; font-family:var(--mono);\n                 font-size:19px; font-weight:600; font-variant-numeric:tabular-nums; }\n  .verdict { flex:1 1 250px; }\n  .verdict h2 { font-size:19px; font-weight:600; letter-spacing:-.3px; }\n  .verdict .why { margin:6px 0 0; font-size:14px; color:var(--muted);\n                  max-width:52ch; }\n  .chip { display:inline-block; margin-top:12px; padding:4px 11px;\n          border-radius:999px; font-family:var(--mono); font-size:12px;\n          font-weight:500; }\n  .chip.have { background:rgba(52,211,153,.13); color:var(--have); }\n  .chip.gap  { background:rgba(251,113,133,.13); color:var(--gap); }\n\n  .split { display:grid; gap:16px; grid-template-columns:1fr 1fr; }\n  @media (max-width:640px) { .split { grid-template-columns:1fr; } }\n  .tags { display:flex; flex-wrap:wrap; gap:8px; margin:0; padding:0;\n          list-style:none; }\n  .tags li { font-family:var(--mono); font-size:13px; padding:5px 11px;\n             border-radius:8px; background:var(--inset);\n             border:1px solid var(--line); }\n  .tags.gap li { border-color:rgba(251,113,133,.42); color:#ffc2cb; }\n  .tags.have li { border-color:rgba(52,211,153,.42); color:#a5edcb; }\n  .tags.none li { color:var(--muted); font-family:var(--sans); }\n\n  .panelhead { display:flex; align-items:center; justify-content:space-between;\n               gap:12px; }\n  .panelhead .eyebrow { margin:0; }\n  .copy { font-family:var(--mono); font-size:12px; letter-spacing:.06em;\n          text-transform:uppercase; color:var(--muted); background:transparent;\n          border:1px solid var(--line); border-radius:8px; padding:6px 12px;\n          cursor:pointer; }\n  .copy:hover { color:var(--text); border-color:var(--kk-cyan); }\n  .cv { margin:12px 0 0; white-space:pre-wrap; font-family:var(--sans);\n        font-size:14.5px; line-height:1.6; background:var(--inset);\n        border:1px solid var(--line); border-radius:10px; padding:18px;\n        max-height:470px; overflow:auto; }\n  .credit { margin:2px 0 0; font-family:var(--mono); font-size:12px;\n            color:var(--muted); }\n  .credit b { color:var(--text); font-weight:500; }\n\n  footer { max-width:980px; margin:0 auto; padding:0 20px 60px;\n           font-family:var(--mono); font-size:12px; color:var(--muted); }\n  footer .rule { height:1px; background:var(--line); margin-bottom:16px; }\n  @media (prefers-reduced-motion:reduce) { * { scroll-behavior:auto !important; } }\n</style>\n</head>\n<body>\n<header class=\"topbar\">\n  <div class=\"bar\">\n    <svg class=\"mark\" viewBox=\"0 0 32 32\" role=\"img\" aria-label=\"KodeKloud\">\n      <defs><linearGradient id=\"kkg\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n        <stop offset=\"0\" stop-color=\"#2b7fff\"></stop>\n        <stop offset=\"1\" stop-color=\"#3ec9de\"></stop>\n      </linearGradient></defs>\n      <rect x=\"0\" y=\"0\" width=\"32\" height=\"32\" rx=\"9\" fill=\"url(#kkg)\"></rect>\n      <path d=\"M13 9.5 L7.5 16 L13 22.5\" fill=\"none\" stroke=\"#0a1120\"\n            stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n      <path d=\"M19 9.5 L24.5 16 L19 22.5\" fill=\"none\" stroke=\"#0a1120\"\n            stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n    </svg>\n    <span class=\"brandname\">KodeKloud</span>\n    <span class=\"divider\"></span>\n    <span class=\"product\">KodeKey</span>\n    <a class=\"getkey\" href=\"https://kodekloud.com/ai-playgrounds/kodekey\"\n       target=\"_blank\" rel=\"noopener\">Get your key</a>\n  </div>\n</header>\n\n<main>\n  <section class=\"hero\">\n    <h1>ResumeRadar</h1>\n    <p>Upload your CV, paste a job ad. You get a match score you can trace, an\n    honest list of what the CV cannot show, and a rewritten version that\n    invents nothing.</p>\n    <span class=\"pill\">One key &middot; every model</span>\n  </section>\n\n  <form class=\"panel\" id=\"f\">\n    <div>\n      <p class=\"eyebrow\">Your CV</p>\n      <input id=\"cv\" type=\"file\" name=\"CV\" accept=\".pdf\" required>\n      <label class=\"drop\" for=\"cv\"><b>Choose a PDF</b>\n        <span id=\"fname\">no file selected</span></label>\n    </div>\n\n    <div>\n      <label class=\"eyebrow\" for=\"job\">The job ad</label>\n      <textarea id=\"job\" name=\"job_ad\" required\n                placeholder=\"Paste the whole posting, requirements and all\"></textarea>\n    </div>\n\n    <button class=\"go\" id=\"go\" type=\"submit\">Review my CV</button>\n    <p class=\"status\" id=\"status\"></p>\n  </form>\n\n  <div id=\"result\"></div>\n</main>\n\n<footer>\n  <div class=\"rule\"></div>\n  Built on KodeKloud Playgrounds &middot; n8n for the workflow, KodeKey for the\n  models &middot; three model calls, one credential\n</footer>\n\n<script>\n  var form = document.getElementById('f');\n  var go = document.getElementById('go');\n  var statusEl = document.getElementById('status');\n  var result = document.getElementById('result');\n  var file = document.getElementById('cv');\n  var fname = document.getElementById('fname');\n\n  file.addEventListener('change', function () {\n    fname.textContent = file.files.length ? file.files[0].name : 'no file selected';\n  });\n\n  // The workflow sends classes and data attributes. Behaviour lives here.\n  function decorate() {\n    var ring = result.querySelector('.ring');\n    if (ring) { ring.style.setProperty('--pct', ring.dataset.score); }\n\n    var pre = result.querySelector('.cv');\n    var copy = result.querySelector('.copy');\n    if (pre && copy) {\n      copy.addEventListener('click', function () {\n        navigator.clipboard.writeText(pre.textContent).then(function () {\n          copy.textContent = 'Copied';\n          setTimeout(function () { copy.textContent = 'Copy'; }, 1800);\n        });\n      });\n    }\n    result.scrollIntoView({ behavior: 'smooth', block: 'start' });\n  }\n\n  form.addEventListener('submit', function (e) {\n    e.preventDefault();\n    go.disabled = true;\n    result.innerHTML = '';\n    statusEl.className = 'status';\n    statusEl.textContent = 'Reading the CV, then the job ad, then rewriting. '\n      + 'Around fifteen seconds.';\n\n    fetch(window.location.href, { method: 'POST', body: new FormData(form) })\n      .then(function (r) {\n        if (!r.ok) { throw new Error('The workflow returned ' + r.status); }\n        return r.text();\n      })\n      .then(function (html) {\n        if (!html.trim()) {\n          throw new Error('The workflow returned an empty response, so no node '\n            + 'reached Respond to Webhook');\n        }\n        statusEl.textContent = '';\n        result.innerHTML = html;\n        decorate();\n      })\n      .catch(function (err) {\n        statusEl.className = 'status err';\n        statusEl.textContent = err.message\n          + '. The Executions tab in n8n shows which node stopped.';\n      })\n      .finally(function () { go.disabled = false; });\n  });\n</script>\n</body>\n</html>`;\n\nreturn [{ json: { html } }];\n"
+      },
+      "id": "page-html",
+      "name": "Page HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      },
+      "id": "serve-page",
+      "name": "Serve Page",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -160,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "CV",
+        "options": {}
+      },
+      "id": "extract-cv-text",
+      "name": "Extract CV Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -400,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Same node name, same output shape, different source. The page posts the CV\n// as an uploaded file and the job ad as a text field; Extract CV Text has\n// already turned the PDF into plain text. Everything downstream reads Intake\n// by name and only wants { cv, job_ad }, so nothing after this changes.\n\nreturn [{\n  json: {\n    cv: $json.text,\n    job_ad: $('Web UI').first().json.body.job_ad,\n  },\n}];\n"
+      },
+      "id": "intake",
+      "name": "Intake",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract only what is written in the CV. Never infer, never add\nanything that is not on the page. Return JSON only, no prose, no code fences:\n{\"roles\": [{\"title\": \"\", \"company\": \"\", \"start\": \"\", \"end\": \"\"}],\n \"skills\": [], \"education\": [], \"parse_warnings\": []}\n\nPut anything you could not read cleanly into parse_warnings.\n\nCV:\n{{ $json.cv }}",
+        "batching": {}
+      },
+      "id": "parse-cv",
+      "name": "Parse CV",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        400,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "google/gemini-3.1-flash-lite",
+          "cachedResultName": "google/gemini-3.1-flash-lite"
+        },
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "parse-cv-model",
+      "name": "Parse CV Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        440,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract only what is written in the job ad. Never infer.\nReturn JSON only, no prose, no code fences:\n{\"must_have\": [], \"nice_to_have\": [], \"years_required\": 0}\n\nmust_have and nice_to_have hold concrete tools, technologies or languages only,\none or two words each, like \"Kubernetes\" or \"Terraform\". Never a sentence, never\na job function such as \"backend services\", and never an amount of experience -\nyears belong in years_required.\n\nJOB AD:\n{{ $json.job_ad }}",
+        "batching": {}
+      },
+      "id": "parse-job-ad",
+      "name": "Parse Job Ad",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        400,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "minimax/minimax-m3",
+          "cachedResultName": "minimax/minimax-m3"
+        },
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "job-ad-model",
+      "name": "Job Ad Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        440,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "numberInputs": 2
+      },
+      "id": "merge",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        720,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Plain JavaScript. No model runs here, so this number is the same every\n// run and you can point at exactly which requirement cost the points.\n// Merge sits upstream only to make sure both parsers finished first.\n\nfunction toJson(raw) {\n  // Matches a three-backtick fence. Written as a quantifier so this line can be\n  // pasted inside a fenced code block without ending it.\n  const fence = /`{3}(?:json)?/g;\n  const body = String(raw).replace(fence, '').trim();\n  try {\n    return JSON.parse(body);\n  } catch (err) {\n    return null;\n  }\n}\n\n// Merge hands both parser outputs to this node in order: input 1 is the CV\n// parser, input 2 is the job ad parser. Reading them positionally means this\n// node does not care what you named those two nodes.\nconst items = $input.all();\n\nif (items.length < 2) {\n  throw new Error('Expected two items from Merge, one from each parser. Check '\n    + 'that both parsers ran and that each is wired to a different Merge input.');\n}\n\nconst cv = toJson(items[0].json.text);\nconst job = toJson(items[1].json.text);\n\nif (!cv || !job) {\n  throw new Error('A parser did not return clean JSON. Open that node and read '\n    + 'its output - that failure is the real signal.');\n}\n\n// Everything the CV can prove, as lists of whole words.\nconst words = (s) => String(s).toLowerCase().match(/[a-z0-9+#.]+/g) || [];\nconst have = [...(cv.skills || []), ...(cv.roles || []).map(r => r.title || '')]\n  .map(words)\n  .filter(w => w.length);\n\n// Whole words only, in both directions. The CV saying \"kubernetes\" satisfies an\n// ad asking for \"kubernetes in production\". Substring matching would have let\n// \"django\" satisfy a requirement for \"go\", which is how you ship a wrong score.\nfunction met(requirement) {\n  const want = words(requirement);\n  if (!want.length) return false;\n  return have.some(got => want.every(w => got.includes(w))\n    || got.every(g => want.includes(g)));\n}\n\nconst must = job.must_have || [];\nconst nice = job.nice_to_have || [];\nconst missing = must.filter(r => !met(r));\nconst bonus = nice.filter(r => met(r));\nconst score = must.length\n  ? Math.round(((must.length - missing.length) / must.length) * 100)\n  : 0;\n\n// Years come from the earliest role the parser could read a year out of.\nconst startYears = (cv.roles || [])\n  .map(r => String(r.start || '').match(/\\d{4}/))\n  .filter(Boolean)\n  .map(m => Number(m[0]));\nconst years = startYears.length\n  ? new Date().getFullYear() - Math.min(...startYears)\n  : 0;\nconst yearsRequired = job.years_required || 0;\n\nreturn [{\n  json: {\n    score,\n    missing,\n    bonus,\n    years,\n    years_required: yearsRequired,\n    years_ok: years >= yearsRequired,\n    must_have: must,\n    cv,\n    job,\n  },\n}];\n"
+      },
+      "id": "score",
+      "name": "Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Rewrite this CV for this specific job.\n\nReorder and reword freely. Never add a title, date, tool or achievement that is\nnot in the CV below. If the CV cannot back something the job asks for, leave it\nout - do not invent it.\n\nReturn only the rewritten CV as plain text. No preamble, no closing note, no\ncommentary of any kind.\n\nCV:\n{{ $('Intake').first().json.cv }}\n\nTHIS JOB WANTS: {{ JSON.stringify($json.must_have) }}\nTHE CV CANNOT SHOW: {{ JSON.stringify($json.missing) }}",
+        "batching": {}
+      },
+      "id": "tailor",
+      "name": "Tailor",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1160,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-6",
+          "cachedResultName": "claude-sonnet-4-6"
+        },
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "writer-model",
+      "name": "Writer Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1200,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Turns the score and the rewritten CV into a report. Two versions of the same\n// thing: html for the page, text for anywhere that cannot render it.\n//\n// The html carries classes and data attributes but no styling of its own - the\n// page it is injected into owns every colour and size. Change the look there.\n\n// Shown in the credit line. Update these if you change the model nodes.\nconst CV_MODEL = 'google/gemini-3.1-flash-lite';\nconst JOB_MODEL = 'minimax/minimax-m3';\nconst WRITER_MODEL = 'claude-sonnet-4-6';\n\nconst scored = $('Score').first().json;\n// This node's input IS the Tailor output, so read it positionally.\nconst tailored = $input.first().json.text;\n\n// None of this is ours. The job ad was typed by whoever is using the page, the\n// requirements were copied out of it by a model, and the CV came back from\n// another model. Escape all of it before it goes anywhere near markup.\nconst esc = (value) => String(value)\n  .replace(/&/g, '&amp;')\n  .replace(/</g, '&lt;')\n  .replace(/>/g, '&gt;')\n  .replace(/\"/g, '&quot;')\n  .replace(/'/g, '&#39;');\n\nconst tags = (items, cls, empty) => items.length\n  ? `<ul class=\"tags ${cls}\">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`\n  : `<ul class=\"tags none\"><li>${esc(empty)}</li></ul>`;\n\nconst total = (scored.must_have || []).length;\nconst met = total - scored.missing.length;\nconst headline = total\n  ? `${met} of ${total} must-haves are in the CV`\n  : 'The ad listed no named requirements';\n\nconst years = scored.years_ok\n  ? `<span class=\"chip have\">${esc(scored.years)} years, meets ` +\n    `${esc(scored.years_required)}</span>`\n  : `<span class=\"chip gap\">${esc(scored.years)} years, needs ` +\n    `${esc(scored.years_required)}</span>`;\n\nconst html = `\n<div class=\"report\">\n  <div class=\"summary\">\n    <div class=\"ring\" data-score=\"${esc(scored.score)}\"\n         data-label=\"${esc(scored.score)}%\"></div>\n    <div class=\"verdict\">\n      <p class=\"eyebrow\">Match on stated requirements</p>\n      <h2>${esc(headline)}</h2>\n      <p class=\"why\">Counted in a Code node, not by a model, so the same CV and\n      job ad always give the same number and every lost point traces to one\n      named requirement.</p>\n      ${years}\n    </div>\n  </div>\n\n  <div class=\"split\">\n    <section class=\"panel\">\n      <p class=\"eyebrow\">What this CV cannot show</p>\n      ${tags(scored.missing, 'gap', 'Nothing - every stated requirement is covered.')}\n    </section>\n    <section class=\"panel\">\n      <p class=\"eyebrow\">Nice-to-haves it does cover</p>\n      ${tags(scored.bonus, 'have', 'None of the nice-to-haves.')}\n    </section>\n  </div>\n\n  <section class=\"panel\">\n    <div class=\"panelhead\">\n      <p class=\"eyebrow\">Tailored CV</p>\n      <button class=\"copy\" type=\"button\">Copy</button>\n    </div>\n    <pre class=\"cv\">${esc(tailored)}</pre>\n  </section>\n\n  <p class=\"credit\">CV read by <b>${esc(CV_MODEL)}</b> &middot; job ad by\n  <b>${esc(JOB_MODEL)}</b> &middot; rewritten by <b>${esc(WRITER_MODEL)}</b>\n  &middot; three models, one KodeKey</p>\n</div>`;\n\nconst bullets = (items, empty) => items.length\n  ? items.map(i => `  - ${i}`).join('\\n')\n  : `  - ${empty}`;\n\nconst text = [\n  `ResumeRadar - ${new Date().toISOString().split('T')[0]}`,\n  '',\n  `${headline} (${scored.score}%)`,\n  `Experience: ${scored.years} years, ` +\n    `${scored.years_ok ? 'meets' : 'needs'} ${scored.years_required}`,\n  '',\n  'What this CV cannot show:',\n  bullets(scored.missing, 'Nothing - every stated requirement is covered.'),\n  '',\n  'Nice-to-haves it does cover:',\n  bullets(scored.bonus, 'None of the nice-to-haves.'),\n  '',\n  'Tailored CV:',\n  '',\n  tailored,\n  '',\n  `CV read by ${CV_MODEL}, job ad by ${JOB_MODEL}, rewritten by ` +\n    `${WRITER_MODEL} - three models, one KodeKey.`,\n].join('\\n');\n\nreturn [{\n  json: {\n    html,\n    text,\n    score: scored.score,\n    missing: scored.missing,\n    years_ok: scored.years_ok,\n    tailored_cv: tailored,\n  },\n}];\n"
+      },
+      "id": "build-report",
+      "name": "Build Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1420,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      },
+      "id": "send-result",
+      "name": "Send Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1640,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Parse CV": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Job Ad": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score": {
+      "main": [
+        [
+          {
+            "node": "Tailor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tailor": {
+      "main": [
+        [
+          {
+            "node": "Build Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse CV Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Parse CV",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Ad Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Parse Job Ad",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writer Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Tailor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web UI": {
+      "main": [
+        [
+          {
+            "node": "Page HTML",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract CV Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page HTML": {
+      "main": [
+        [
+          {
+            "node": "Serve Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract CV Text": {
+      "main": [
+        [
+          {
+            "node": "Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intake": {
+      "main": [
+        [
+          {
+            "node": "Parse CV",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Parse Job Ad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Report": {
+      "main": [
+        [
+          {
+            "node": "Send Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
