@@ -1,4 +1,4 @@
-# ResumeRadar – AI CV Reviewer
+# ResumeRadar - AI CV Reviewer
 
 ## Project info
 

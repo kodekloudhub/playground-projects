@@ -60,7 +60,7 @@ Nginx pods -> Kubernetes pod-log API -> regex filter -> KodeKey model -> Gotify
 
 ## Steps
 
-### Task 1 — Deploy the target gateway and Gotify
+### Task 1 - Deploy the target gateway and Gotify
 
 Create the target application and notification sink:
 
@@ -74,7 +74,7 @@ kubectl wait --for=condition=available deployment/ops-notifier --timeout=60s
 
 > **Why:** This creates both sides of the event pipeline: Nginx produces telemetry and Gotify receives the resulting security report.
 
-### Task 2 — Grant only pod and pod-log access
+### Task 2 - Grant only pod and pod-log access
 
 Create and apply the agent's namespace-scoped RBAC policy:
 
@@ -89,7 +89,7 @@ kubectl auth can-i get secrets --as=system:serviceaccount:default:secops-agent-s
 
 Expected results are `yes`, `yes`, and `no`.
 
-### Task 3 — Open Gotify on port 8085 and create the app token
+### Task 3 - Open Gotify on port 8085 and create the app token
 
 Start the port-forward:
 
@@ -111,7 +111,7 @@ curl -s -X POST http://localhost:8085/application \
 
 > **Why:** The browser port is deliberately `8085`, while Gotify remains ClusterIP-only inside Kubernetes.
 
-### Task 4 — Obtain KodeKey credentials and create configuration
+### Task 4 - Obtain KodeKey credentials and create configuration
 
 Open [KodeKey](https://kodekloud.com/ai-playgrounds/kodekey), choose **Launch now**, then **Start Playground**. Copy the displayed Base URL and API Key. Keep them in shell variables; do not write the key into a manifest or source file.
 
@@ -129,7 +129,7 @@ kubectl apply -f secops-config.yaml
 
 > **Why:** Runtime configuration and credentials can change independently, and the Secret prevents tokens from being embedded in the agent image.
 
-### Task 5 — Create the streaming agent
+### Task 5 - Create the streaming agent
 
 Create the Python source with a local signature filter and a five-minute Gotify cooldown. The cooldown key is derived from the normalized alert title and incident class, so model retries do not fire duplicate notifications while failed deliveries remain retryable.
 
@@ -141,7 +141,7 @@ mkdir -p secops-build
 
 > **Why:** The regex stage is cheap and immediate; only matching events reach the model, and the notification cooldown makes alert delivery idempotent for the lab's incident window.
 
-### Task 6 — Mount and run the agent in Kubernetes
+### Task 6 - Mount and run the agent in Kubernetes
 
 Create a ConfigMap from the source and deploy it with the dedicated ServiceAccount:
 
@@ -207,7 +207,7 @@ kubectl apply -f agent-runtime.yaml
 kubectl rollout status deployment/secops-intelligence-agent --timeout=120s
 ```
 
-### Task 7 — Generate an incident and verify the end-to-end alert
+### Task 7 - Generate an incident and verify the end-to-end alert
 
 Send attack-shaped requests to the NodePort, inspect the agent log, and check Gotify in the browser on port `8085`:
 

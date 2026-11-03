@@ -47,14 +47,14 @@ By the end you will be able to:
 
 ## Steps
 
-### Task 1 — Get Your API Keys via KodeKeys
+### Task 1 - Get Your API Keys via KodeKeys
 
 1. Navigate to https://kodekloud.com/ai-playgrounds/kodekey in your browser.
 2. Click the **Launch now** button, then select **Start Playground**.
 3. Select your designated AI model from the available options.
 4. Copy both the **Base URL** and the **API Key** provided. Keep these handy.
 
-### Task 2 — Register and Activate n8n
+### Task 2 - Register and Activate n8n
 
 1. Open the n8n editor by clicking the n8n UI button in your lab environment.
 2. Complete the registration form with a valid personal email address, your first and last name, and a secure password.
@@ -63,7 +63,7 @@ By the end you will be able to:
 5. On the n8n UI, navigate to **Settings > Usage and plan**. 
 6. Click **Enter activation key**, paste the license key you just copied, and click **Activate**.
 
-### Task 3 — Generate a Gmail App Password
+### Task 3 - Generate a Gmail App Password
 
 1. Open a new browser tab and go to your Google Account Security settings: https://myaccount.google.com/security
 2. Ensure you are logged into the `@gmail.com` account you want to use for this lab.
@@ -72,7 +72,7 @@ By the end you will be able to:
 5. Under "App name," type `n8n Lab` and click **Create**.
 6. Google will generate a 16-letter password. Copy this password and keep it open in a notepad.
 
-### Task 4 — Create the Workflow & Connect the IMAP Email Trigger
+### Task 4 - Create the Workflow & Connect the IMAP Email Trigger
 
 1. Switch back to your n8n tab. Click the **+** icon in the top-left corner of the sidebar and select **Workflow** from the dropdown menu (or click **Start from scratch** in the center).
 2. Click the **+ Add first step** button on the canvas.
@@ -88,7 +88,7 @@ By the end you will be able to:
 7. In the node settings, ensure **Mailbox Name** is set to `INBOX` and the **Action** dropdown is set to `Mark as Read`.
 8. Close the settings panel.
 
-### Task 5 — Add the AI Brain & Connect KodeKeys
+### Task 5 - Add the AI Brain & Connect KodeKeys
 
 1. Hover over the right side of the Email Trigger node and click the **+** icon.
 2. Search for `OpenAI` and select the **OpenAI** node.
@@ -106,7 +106,7 @@ Analyze this email: {{ $json.textPlain }}. Return ONLY a raw JSON object with tw
 9. Scroll down to the bottom, click **Add option**, select **Output Format**, and set it to `JSON Object`.
 10. Close the settings panel.
 
-### Task 6 — Parse the AI JSON Output
+### Task 6 - Parse the AI JSON Output
 
 1. Click the **+** icon on the right side of the OpenAI node.
 2. Search for `Code` and select the **Code** node.
@@ -118,7 +118,7 @@ Analyze this email: {{ $json.textPlain }}. Return ONLY a raw JSON object with tw
 
 6. Close the panel.
 
-### Task 7 — Configure the Switch Node (Routing Logic)
+### Task 7 - Configure the Switch Node (Routing Logic)
 
 1. Click the **+** icon next to the Code node. Search for and select the **Switch** node.
 2. Set the Mode to **Rules**.
@@ -133,7 +133,7 @@ Analyze this email: {{ $json.textPlain }}. Return ONLY a raw JSON object with tw
    - **Value 2:** `Sales`
 6. Close the panel.
 
-### Task 8 — Configure the Billing Action (Forwarding)
+### Task 8 - Configure the Billing Action (Forwarding)
 
 1. Hover over the Switch node, click and drag the connector from **Output 0** into empty space.
 2. Search for `Send Email` and select the **Send Email** node. Select Action: **Send an email**.
@@ -158,7 +158,7 @@ Analyze this email: {{ $json.textPlain }}. Return ONLY a raw JSON object with tw
 
 7. Close the panel.
 
-### Task 9 — Configure the Sales Action (Forwarding)
+### Task 9 - Configure the Sales Action (Forwarding)
 
 1. Hover over the Switch node, click and drag the connector from **Output 2** into empty space.
 2. Search for `Send Email` and select the **Send Email** node. Select Action: **Send an email**.
@@ -176,7 +176,7 @@ Analyze this email: {{ $json.textPlain }}. Return ONLY a raw JSON object with tw
 
 5. Close the panel.
 
-### Task 10 — Configure the Tech Support Action (Forwarding)
+### Task 10 - Configure the Tech Support Action (Forwarding)
 
 1. Go back to your Switch node. Hover over **Output 1**, click and drag a new connector into empty space.
 2. Search for `Send Email` and select the **Send Email** node. Select Action: **Send an email**.
@@ -194,7 +194,7 @@ Analyze this email: {{ $json.textPlain }}. Return ONLY a raw JSON object with tw
 
 5. Close the panel.
 
-### Task 11 — Configure the IF Node (Sentiment Check)
+### Task 11 - Configure the IF Node (Sentiment Check)
 
 1. Go back to your Switch node. Click and drag another connector from **Output 1** (Tech Support) into empty space.
 2. Search for and select the **If** node.
@@ -208,7 +208,7 @@ Analyze this email: {{ $json.textPlain }}. Return ONLY a raw JSON object with tw
 5. Set **Value 2** to `Frustrated`.
 6. Close the panel.
 
-### Task 12 — Configure the Frustrated Tech Support Action (Escalation Auto-Reply)
+### Task 12 - Configure the Frustrated Tech Support Action (Escalation Auto-Reply)
 
 1. Drag the connector from the IF node's **true** output into empty space.
 2. Search for `Send Email` and select the **Send Email** node. Select Action: **Send an email**.
@@ -226,7 +226,7 @@ Hi there, I am an automated assistant. I detected that you are experiencing a fr
 
 5. Close the panel.
 
-### Task 13 — Configure the Standard Tech Support Action (Auto-Reply)
+### Task 13 - Configure the Standard Tech Support Action (Auto-Reply)
 
 1. Drag the connector from the IF node's **false** output into empty space.
 2. Search for `Send Email` and select the **Send Email** node. Select Action: **Send an email**.
@@ -244,12 +244,12 @@ Hi there, we have received your technical support request. A team member will re
 
 5. Close the panel.
 
-### Task 14 — Publish and Activate
+### Task 14 - Publish and Activate
 
 1. At the top left of the screen, click the default workflow name ("My workflow") and rename it to `Smart Customer Email Triage`.
 2. In the top right corner of the screen, click the **Publish** button. This saves your workflow and activates it immediately.
 
-### Task 15 — Test Your Triage Workflow (See It In Action)
+### Task 15 - Test Your Triage Workflow (See It In Action)
 
 Now that your workflow is active, it will automatically listen for new, unread emails. Open a different email account and compose a new message addressed to the Gmail account connected to n8n. 
 
