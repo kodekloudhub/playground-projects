@@ -13,8 +13,8 @@ cd "$HOME/code/terraform-3tier"
 
 
 
-docker pull egglou/nova:searxng
-docker pull egglou/nova:latest
+docker pull kodekloud/nova:latest
+docker pull kodekloud/nova:searxng
 
 export DB_PASSWORD="$(openssl rand -hex 24)"
 export SEARXNG_SECRET_KEY="$(openssl rand -hex 24)"
