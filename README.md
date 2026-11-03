@@ -105,22 +105,22 @@ Ready-to-run code for KodeKloud hands-on playground projects. Open a project fol
 | Project | Run |
 |---|---|
 | [AI Email Sorter](./projects/kodekey-enabled/n8n-kodekey-playground/smart-customer-email-triage-ai) | [▶ playground](https://kodekloud.com/playgrounds/playground-n8n) |
-| [ResumeRadar - Import and Run](./projects/kodekey-enabled/n8n-kodekey-playground/n8n-resume-radar-import) | — |
+| [ResumeRadar – AI CV Reviewer](./projects/kodekey-enabled/n8n-kodekey-playground/n8n-resume-radar-import) | — |
 
 ### Kubernetes | KodeKey Playground
 | Project | Run |
 |---|---|
-| [Autonomous SecOps Agent](./projects/kodekey-enabled/kubernetes-kodekey-playground/autonomous-secops-agent) | [▶ playground](https://kodekloud.com/playgrounds/playground-kubernetes-single-node-latest, https://kodekloud.com/ai-playgrounds/kodekey) |
+| [AI Security Log Monitor](./projects/kodekey-enabled/kubernetes-kodekey-playground/autonomous-secops-agent) | [▶ playground](https://kodekloud.com/playgrounds/playground-kubernetes-single-node-latest, https://kodekloud.com/ai-playgrounds/kodekey) |
 
 ### AWS Terraform | KodeKey Playground
 | Project | Run |
 |---|---|
-| [Secure Three-Tier AI Application on AWS with Private ECS and NAT Gateway](./projects/kodekey-enabled/aws-terraform-kodekey-playground/three-tier-application-aws-terraform-private-ecs-nat) | [▶ playground](https://kodekloud.com/playgrounds/playground-terraform-aws) |
+| [AWS 3-Tier App (Terraform)](./projects/kodekey-enabled/aws-terraform-kodekey-playground/three-tier-application-aws-terraform-private-ecs-nat) | [▶ playground](https://kodekloud.com/playgrounds/playground-terraform-aws) |
 
 ### Python | KodeKey Playground
 | Project | Run |
 |---|---|
-| [Type-Safe Financial Extraction Engine](./projects/kodekey-enabled/python-kodekey-playground/type-safe-financial-extraction-engine) | [▶ playground](https://kodekloud.com/playgrounds/playground-python) |
+| [AI Financial Data Extractor](./projects/kodekey-enabled/python-kodekey-playground/type-safe-financial-extraction-engine) | [▶ playground](https://kodekloud.com/playgrounds/playground-python) |
 
 ### AWS | KodeKey
 | Project | Run |

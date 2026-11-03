@@ -43,22 +43,22 @@ Each project runs on a KodeKey-enabled playground. Open a project for its full w
 | Project | What it does |
 |---|---|
 | [AI Email Sorter](./n8n-kodekey-playground/smart-customer-email-triage-ai) | Auto-classifies and routes support emails with an LLM inside an n8n workflow. |
-| [ResumeRadar – CV Reviewer with N8N](./n8n-kodekey-playground/n8n-resume-radar-import) | Webhook-backed page that scores a CV against a job ad using three vendors' models on one key. |
+| [ResumeRadar – AI CV Reviewer](./n8n-kodekey-playground/n8n-resume-radar-import) | Webhook-backed page that scores a CV against a job ad using three vendors' models on one key. |
 
 ### Kubernetes | KodeKey Playground
 | Project | What it does |
 |---|---|
-| [Autonomous SecOps Agent](./kubernetes-kodekey-playground/autonomous-secops-agent) | Streams pod logs, flags attacks with regex + an LLM, and sends Gotify alerts under least-privilege RBAC. |
+| [AI Security Log Monitor](./kubernetes-kodekey-playground/autonomous-secops-agent) | Streams pod logs, flags attacks with regex + an LLM, and sends Gotify alerts under least-privilege RBAC. |
 
 ### AWS Terraform | KodeKey Playground
 | Project | What it does |
 |---|---|
-| [AWS Three Tier Application + Terraform](./aws-terraform-kodekey-playground/three-tier-application-aws-terraform-private-ecs-nat) | Secure three-tier AI application on AWS with private ECS and a NAT gateway, provisioned by Terraform. |
+| [AWS 3-Tier App (Terraform)](./aws-terraform-kodekey-playground/three-tier-application-aws-terraform-private-ecs-nat) | Secure three-tier AI application on AWS with private ECS and a NAT gateway, provisioned by Terraform. |
 
 ### Python | KodeKey Playground
 | Project | What it does |
 |---|---|
-| [Type-Safe Financial Extraction Engine via pydantic-ai](./python-kodekey-playground/type-safe-financial-extraction-engine) | Extracts structured, validated financial data from documents using pydantic-ai. |
+| [AI Financial Data Extractor](./python-kodekey-playground/type-safe-financial-extraction-engine) | Extracts structured, validated financial data from documents using pydantic-ai. |
 
 ### AWS | KodeKey
 | Project | What it does |

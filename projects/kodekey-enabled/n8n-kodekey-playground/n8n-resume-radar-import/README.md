@@ -1,4 +1,4 @@
-# ResumeRadar - Import and Run
+# ResumeRadar – AI CV Reviewer
 
 ## Project info
 
