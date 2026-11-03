@@ -44,7 +44,7 @@ By the end you will be able to:
 
 ## Prerequisites
 
-- Playground: **{{ playground }}** (open it before starting)
+- Playground: **Kubernetes single-node (latest)** (open it before starting)
 - `kubectl` access to the single-node cluster
 - Basic Python, HTTP, and Kubernetes manifest knowledge
 

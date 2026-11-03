@@ -48,7 +48,7 @@ By the end you will be able to:
 
 ## Prerequisites
 
-- Playground: **{{ playground }}** ([open it before starting](https://kodekloud.com/cloud-playgrounds/aws))
+- Playground: **AWS Cloud Sandbox** ([open it before starting](https://kodekloud.com/cloud-playgrounds/aws))
 - AWS CLI configured with credentials and a default region
 - Basic Terraform, Docker, AWS IAM, and networking knowledge
 
