@@ -104,7 +104,7 @@ Ready-to-run code for KodeKloud hands-on playground projects. Open a project fol
 ### N8N | KodeKey Playground
 | Project | Run |
 |---|---|
-| [Smart Customer Email Triage with AI](./projects/kodekey-enabled/n8n-kodekey-playground/smart-customer-email-triage-ai) | [▶ playground](https://kodekloud.com/playgrounds/playground-n8n) |
+| [AI Email Sorter](./projects/kodekey-enabled/n8n-kodekey-playground/smart-customer-email-triage-ai) | [▶ playground](https://kodekloud.com/playgrounds/playground-n8n) |
 | [ResumeRadar - Import and Run](./projects/kodekey-enabled/n8n-kodekey-playground/n8n-resume-radar-import) | — |
 
 ### Kubernetes | KodeKey Playground
@@ -125,7 +125,7 @@ Ready-to-run code for KodeKloud hands-on playground projects. Open a project fol
 ### AWS | KodeKey
 | Project | Run |
 |---|---|
-| [Cloud Cost Pulse — Real-Time FinOps Lakehouse](./projects/kodekey-enabled/aws-kodekey/cloud-cost-pulse-realtime-finops-lakehouse-2) | [▶ playground](https://kodekloud.com/cloud-playgrounds/aws) |
+| [AI Cloud Cost Monitor](./projects/kodekey-enabled/aws-kodekey/cloud-cost-pulse-realtime-finops-lakehouse-2) | [▶ playground](https://kodekloud.com/cloud-playgrounds/aws) |
 
 ## Database
 

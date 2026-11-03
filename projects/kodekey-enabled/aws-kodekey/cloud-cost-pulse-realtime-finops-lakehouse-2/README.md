@@ -1,4 +1,4 @@
-# Cloud Cost Pulse — Real-Time FinOps Lakehouse
+# AI Cloud Cost Monitor
 
 ## Project info
 

@@ -42,7 +42,7 @@ Each project runs on a KodeKey-enabled playground. Open a project for its full w
 ### N8N | KodeKey Playground
 | Project | What it does |
 |---|---|
-| [Smart Customer Email Triage with AI](./n8n-kodekey-playground/smart-customer-email-triage-ai) | Auto-classifies and routes support emails with an LLM inside an n8n workflow. |
+| [AI Email Sorter](./n8n-kodekey-playground/smart-customer-email-triage-ai) | Auto-classifies and routes support emails with an LLM inside an n8n workflow. |
 | [ResumeRadar – CV Reviewer with N8N](./n8n-kodekey-playground/n8n-resume-radar-import) | Webhook-backed page that scores a CV against a job ad using three vendors' models on one key. |
 
 ### Kubernetes | KodeKey Playground
@@ -63,7 +63,7 @@ Each project runs on a KodeKey-enabled playground. Open a project for its full w
 ### AWS | KodeKey
 | Project | What it does |
 |---|---|
-| [Cloud Cost Pulse — Real-Time FinOps Lakehouse](./aws-kodekey/cloud-cost-pulse-realtime-finops-lakehouse-2) | Streaming FinOps lakehouse that detects cost anomalies and explains them with an LLM. |
+| [AI Cloud Cost Monitor](./aws-kodekey/cloud-cost-pulse-realtime-finops-lakehouse-2) | Streaming FinOps lakehouse that detects cost anomalies and explains them with an LLM. |
 
 ---
 

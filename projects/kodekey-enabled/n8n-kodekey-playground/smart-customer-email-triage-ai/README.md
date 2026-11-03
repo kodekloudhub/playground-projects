@@ -1,4 +1,4 @@
-# Smart Customer Email Triage with AI
+# AI Email Sorter
 
 ## Project info
 
