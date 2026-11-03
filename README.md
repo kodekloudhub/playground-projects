@@ -1,5 +1,11 @@
 # KodeKloud Playground Projects
 
+<p align="center">
+  <a href="https://kodekloud.com/playgrounds">
+    <img src="./docs/playgrounds-banner.png" alt="KodeKloud Playgrounds — Cloud, AI, Kubernetes and more" width="820">
+  </a>
+</p>
+
 Ready-to-run code for KodeKloud hands-on playground projects. Open a project folder, copy the files onto the linked playground, and go. Step-by-step instructions live on each playground's Projects tab.
 
 **34 projects.** Each folder under [`projects/`](./projects) holds only the code you need.
