@@ -7,6 +7,22 @@ ssh -i cloud-cost-pulse.pem ec2-user@EC2_PUBLIC_DNS
 aws sts get-caller-identity
 aws configure list
 
+export AWS_REGION=us-east-1
+export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+export RUN_ID=$(date -u +%m%d%H%M)
+export FINOPS_BUCKET=cloud-cost-pulse-$ACCOUNT_ID-$RUN_ID
+
+aws s3api create-bucket --bucket "$FINOPS_BUCKET" --region "$AWS_REGION"
+aws s3api put-public-access-block --bucket "$FINOPS_BUCKET" --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+aws s3api put-bucket-encryption --bucket "$FINOPS_BUCKET" --server-side-encryption-configuration '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+aws s3api put-bucket-versioning --bucket "$FINOPS_BUCKET" --versioning-configuration Status=Enabled
+
+for prefix in raw/events raw/manifests quarantine/events silver/events silver/rates gold/snapshots ai/audit; do
+  aws s3api put-object --bucket "$FINOPS_BUCKET" --key "$prefix/.keep"
+done
+
+echo "FINOPS_BUCKET=$FINOPS_BUCKET"
+
 aws s3 ls "s3://$FINOPS_BUCKET/"
 
 sudo dnf install -y postgresql16 || sudo dnf install -y postgresql
@@ -33,12 +49,14 @@ unset PGPASSWORD
 cat > /tmp/finops-db-secret.json <<'JSON'
 {"host":"REPLACE_WITH_RDS_ENDPOINT","port":5432,"username":"REPLACE_WITH_RDS_USER","password":"REPLACE_WITH_RDS_PASSWORD","airflow_database":"airflow_meta","finops_database":"finops"}
 JSON
+
 aws secretsmanager create-secret --name cloud-cost-pulse/db --secret-string file:///tmp/finops-db-secret.json
 rm -f /tmp/finops-db-secret.json
 
 cat > /tmp/kodekey-secret.json <<'JSON'
 {"base_url":"REPLACE_WITH_KODEKEY_API_URL/chat/completions","api_key":"REPLACE_WITH_KODEKEY_API_KEY","model":"REPLACE_WITH_KODEKEY_MODEL"}
 JSON
+
 aws secretsmanager create-secret --name cloud-cost-pulse/kodekey --secret-string file:///tmp/kodekey-secret.json
 rm -f /tmp/kodekey-secret.json
 
@@ -46,21 +64,7 @@ aws secretsmanager list-secrets --query "SecretList[?starts_with(Name, 'cloud-co
 
 mkdir -p ~/cloud-cost-pulse/{dags,consumer,dbt/models/staging,dbt/models/intermediate,dbt/models/gold,dbt/tests,scripts,logs,plugins,config}
 cd ~/cloud-cost-pulse
-cat > .env <<'EOF'
-AWS_REGION=us-east-1
-FINOPS_BUCKET=REPLACE_WITH_BUCKET
-DB_SECRET_ID=cloud-cost-pulse/db
-KODEKEY_SECRET_ID=cloud-cost-pulse/kodekey
-KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-KAFKA_TOPIC=finops-usage
-KAFKA_GROUP_ID=cloud-cost-pulse-consumer
-BATCH_SECONDS=30
-AIRFLOW_ADMIN_USERNAME=admin
-AIRFLOW_ADMIN_PASSWORD=REPLACE_LOCALLY
-AIRFLOW__CORE__EXECUTOR=LocalExecutor
-AIRFLOW__CORE__LOAD_EXAMPLES=False
-AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
-EOF
+
 chmod 600 .env
 
 docker compose build
@@ -79,6 +83,8 @@ psql "host=$DB_HOST port=$DB_PORT user=$DB_USER dbname=finops sslmode=require" -
 docker compose run --rm airflow-apiserver dbt --project-dir /opt/airflow/dbt debug
 docker compose run --rm airflow-apiserver dbt --project-dir /opt/airflow/dbt run
 docker compose run --rm airflow-apiserver dbt --project-dir /opt/airflow/dbt test
+
+python -m py_compile consumer/consumer.py consumer/_common.py consumer/check_manifests.py consumer/validate_batch.py consumer/load_staging.py consumer/detect_anomalies.py consumer/explain_anomalies.py consumer/publish_metrics.py
 
 python -m py_compile consumer/kodekey_provider.py consumer/explain_anomalies.py
 

@@ -19,10 +19,10 @@ aws ecr get-login-password --region "$AWS_REGION" |
 APP_REPOSITORY="$ECR_REGISTRY/${ENVIRONMENT}-app-repo"
 SEARCH_REPOSITORY="$ECR_REGISTRY/${ENVIRONMENT}-search-repo"
 
-docker tag egglou/nova:searxng "$SEARCH_REPOSITORY:latest"
+docker tag kodekloud/nova:searxng "$SEARCH_REPOSITORY:latest"
 docker push "$SEARCH_REPOSITORY:latest"
 
-docker tag egglou/nova:latest "$APP_REPOSITORY:latest"
+docker tag kodekloud/nova:latest "$APP_REPOSITORY:latest"
 docker push "$APP_REPOSITORY:latest"
 
 aws ecr describe-images --repository-name prod-app-repo --region "$AWS_REGION"
