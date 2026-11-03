@@ -3,7 +3,7 @@
 ## Project info
 
 - **ID:** cloud-cost-pulse-realtime-finops-lakehouse
-- **Title:** Cloud Cost Pulse — Real-Time FinOps Lakehouse
+- **Title:** Cloud Cost Pulse - Real-Time FinOps Lakehouse
 - **Playground:** AWS Cloud Sandbox and KodeKey
 - **Playground link:** [https://kodekloud.com/cloud-playgrounds/aws](https://kodekloud.com/cloud-playgrounds/aws)
 - **Difficulty:** advanced
@@ -70,11 +70,11 @@ By the end you will be able to:
 
 This section is the executable project runbook. Replace only values marked `REPLACE_ME` in your local shell or secret store. Use the exact IAM role name shown in the steps.
 
-### Task 1 — Prepare the environments
+### Task 1 - Prepare the environments
 
 Open the AWS Console and KodeKey in separate tabs. In KodeKey, open **API Keys**, copy the Base URL and selected model from its API example, then append `/chat/completions` to the Base URL. Keep the API key in Secrets Manager or the EC2 environment; do not place it in source files or event data. Kafka runs locally on the EC2 host. Use synthetic event data. 
 
-### Task 2 — Create the AWS IAM role
+### Task 2 - Create the AWS IAM role
 
 In AWS IAM, create the custom role `iam_role_ec2`:
 
@@ -92,7 +92,7 @@ In AWS IAM, create the custom role `iam_role_ec2`:
 
 The EC2 instance must use the `iam_role_ec2` instance profile. Do not configure personal AWS access keys on the server.
 
-### Task 3 — Launch EC2
+### Task 3 - Launch EC2
 
 In EC2:
 
@@ -125,7 +125,7 @@ aws configure list
 
 The caller identity should show an assumed role based on `iam_role_ec2`.
 
-### Task 4 — Create the S3 lake
+### Task 4 - Create the S3 lake
 
 Run on EC2:
 
@@ -153,7 +153,7 @@ Verify:
 aws s3 ls "s3://$FINOPS_BUCKET/"
 ```
 
-### Task 5 — Create RDS PostgreSQL
+### Task 5 - Create RDS PostgreSQL
 
 In RDS:
 
@@ -207,7 +207,7 @@ SQL
 unset PGPASSWORD
 ```
 
-### Task 6 — Store secrets in Secrets Manager
+### Task 6 - Store secrets in Secrets Manager
 
 Create the database secret locally on EC2, use it once, then remove the file:
 
@@ -235,7 +235,7 @@ Verify only secret names:
 aws secretsmanager list-secrets --query "SecretList[?starts_with(Name, 'cloud-cost-pulse')].Name"
 ```
 
-### Task 7 — Create the project directory
+### Task 7 - Create the project directory
 
 ```bash
 mkdir -p ~/cloud-cost-pulse/{dags,consumer,dbt/models/staging,dbt/models/intermediate,dbt/models/gold,dbt/tests,scripts,logs,plugins,config}
@@ -250,7 +250,7 @@ chmod 600 .env
 
 The `.env` file is temporary lab material. Keep it readable only by the current user and do not commit it or expose its values in logs.
 
-### Task 8 — Build the Airflow image
+### Task 8 - Build the Airflow image
 
 Create Dockerfile:
 
@@ -268,7 +268,7 @@ Build the image:
 docker compose build
 ```
 
-### Task 9 — Create the local Kafka event source
+### Task 9 - Create the local Kafka event source
 
 Kafka runs locally in Docker on the EC2 host. You will create its topic and publish test events in the Kafbat Kafka UI. Start Kafka and its browser UI:
 
@@ -298,11 +298,11 @@ Publish these test cases from the topic's message view. Give each new event a un
 5. A delayed event with an old event_time.
 6. A 5x to 10x payments/checkout-api spike.
 
-For the missing-team test, remove `team` from the JSON. For the negative-quantity test, set `quantity` below zero. For the delayed-event test, set `event_time` well before the current date while keeping `received_at` current. For the spike, raise the payments `checkout-api` quantity to 5–10 times its normal value.
+For the missing-team test, remove `team` from the JSON. For the negative-quantity test, set `quantity` below zero. For the delayed-event test, set `event_time` well before the current date while keeping `received_at` current. For the spike, raise the payments `checkout-api` quantity to 5-10 times its normal value.
 
 The Kafbat UI is available at `http://EC2_PUBLIC_IP:8081`; Kafka itself stays on Docker's private Compose network and does not need a public broker port.
 
-### Task 10 — Implement the Kafka consumer
+### Task 10 - Implement the Kafka consumer
 
 Create consumer/consumer.py:
 
@@ -326,7 +326,7 @@ The consumer must preserve each source `event_id` and `batch_id`. Downstream loa
 
 Each S3 manifest also stores `records_read`, `records_failed`, and `batch_upload_seconds`. `records_read` counts Kafka messages successfully returned to the consumer. `records_failed` counts Kafka message errors and JSON decoding failures; schema or business-rule rejections are counted separately as quarantined pipeline rows.
 
-### Task 11 — Create warehouse tables
+### Task 11 - Create warehouse tables
 
 Create scripts/warehouse.sql:
 
@@ -346,7 +346,7 @@ insert into staging.rate_cards values
 on conflict (rate_card_id) do nothing;
 ```
 
-### Task 12 — Configure dbt
+### Task 12 - Configure dbt
 
 Create dbt/profiles.yml:
 
@@ -383,7 +383,7 @@ docker compose run --rm airflow-apiserver dbt --project-dir /opt/airflow/dbt run
 docker compose run --rm airflow-apiserver dbt --project-dir /opt/airflow/dbt test
 ```
 
-### Task 13 — Add validation and quarantine
+### Task 13 - Add validation and quarantine
 
 The DAG calls these helper files, so create them before the first run: `check_manifests.py`, `validate_batch.py`, `load_staging.py`, `detect_anomalies.py`, `explain_anomalies.py`, and `publish_metrics.py`. If any is missing, the DAG fails with “file not found”.
 
@@ -426,7 +426,7 @@ python -m py_compile consumer/consumer.py consumer/_common.py consumer/check_man
 
 Run the compile check before starting Airflow. The scripts intentionally fail on unreadable S3, missing state, unavailable PostgreSQL, or failed CloudWatch writes; individual malformed records are quarantined and do not stop the batch.
 
-### Task 14 — Review deterministic anomaly detection
+### Task 14 - Review deterministic anomaly detection
 
 Review the supplied `consumer/detect_anomalies.py`. It must:
 
@@ -445,7 +445,7 @@ Initial thresholds:
 
 The detector, not the AI, decides whether the anomaly exists.
 
-### Task 15 — Add the KodeKey adapter
+### Task 15 - Add the KodeKey adapter
 
 Create consumer/kodekey_provider.py. Use the exact endpoint and payload format shown in the KodeKey API example:
 
@@ -470,7 +470,7 @@ Compile the adapter and its caller:
 python -m py_compile consumer/kodekey_provider.py consumer/explain_anomalies.py
 ```
 
-### Task 16 — Create the Airflow DAG
+### Task 16 - Create the Airflow DAG
 
 Create dags/finops_microbatch.py:
 
@@ -500,7 +500,7 @@ Open `http://EC2_PUBLIC_IP:8080` and sign in with `AIRFLOW_ADMIN_USERNAME` and `
 
 The DAG also runs on its five-minute schedule after it is unpaused.
 
-### Task 17 — Run the end-to-end validation
+### Task 17 - Run the end-to-end validation
 
 1. Use the Kafka UI at `http://EC2_PUBLIC_IP:8081` to send normal events for three windows.
 2. Confirm a manifest appears under `raw/manifests/`.
@@ -521,7 +521,7 @@ Confirm CloudWatch receives all nine `CloudCostPulse` metrics listed in Task 20,
 aws cloudwatch list-metrics --namespace CloudCostPulse --query 'Metrics[].MetricName' --output table
 ```
 
-### Task 18 — Test the failure paths
+### Task 18 - Test the failure paths
 
 #### Malformed event
 
@@ -563,7 +563,7 @@ Expected:
 - Automatic retry.
 - No duplicate cost after recovery.
 
-### Task 19 — Inject the FinOps anomaly
+### Task 19 - Inject the FinOps anomaly
 
 1. In the Kafka UI, send normal payments events for three windows.
 2. Increase checkout-api quantity by 5x to 10x for one window.
@@ -584,7 +584,7 @@ order by requested_at desc;
 
 The expected AI result is a concise explanation with evidence, likely drivers, recommended checks, confidence, and uncertainty. The AI must not modify financial facts or AWS resources.
 
-### Task 20 — Add operational checks
+### Task 20 - Add operational checks
 
 Expose these metrics through CloudWatch namespace `CloudCostPulse`; include `Environment` and `Region` dimensions on every metric:
 
@@ -602,7 +602,7 @@ Create alarms for no batch for 15 minutes, quarantine rate above 5 percent, Airf
 
 The gold `analytics.fact_cost` model is incremental and unique on `(event_id, model_run_id)`. Include `rate_card_id` in the fact and derive `model_run_id` from `event_id` plus `rate_card_id`. When replacing a rate, close the old card with `effective_to` before inserting a new effective-dated card with a new `rate_card_id`.
 
-### Task 21 — Backfill and replay
+### Task 21 - Backfill and replay
 
 Close the previous rate card with `effective_to` and insert its corrected replacement with a new `rate_card_id`, as described in Task 20. Replay a historical S3 prefix through validation and dbt. Verify:
 

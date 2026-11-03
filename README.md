@@ -105,7 +105,7 @@ Ready-to-run code for KodeKloud hands-on playground projects. Open a project fol
 | Project | Run |
 |---|---|
 | [AI Email Sorter](./projects/kodekey-enabled/n8n-kodekey-playground/smart-customer-email-triage-ai) | [▶ playground](https://kodekloud.com/playgrounds/playground-n8n) |
-| [ResumeRadar – AI CV Reviewer](./projects/kodekey-enabled/n8n-kodekey-playground/n8n-resume-radar-import) | — |
+| [ResumeRadar - AI CV Reviewer](./projects/kodekey-enabled/n8n-kodekey-playground/n8n-resume-radar-import) | — |
 
 ### Kubernetes | KodeKey Playground
 | Project | Run |

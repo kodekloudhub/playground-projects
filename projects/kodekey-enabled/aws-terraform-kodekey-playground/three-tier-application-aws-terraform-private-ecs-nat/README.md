@@ -54,7 +54,7 @@ By the end you will be able to:
 
 ## Steps
 
-### Task 1 — Prepare Terraform, AWS CLI, and Docker
+### Task 1 - Prepare Terraform, AWS CLI, and Docker
 
 Confirm the AWS identity and install the Docker Engine package required for pulling Docker Hub images and pushing them to ECR. The playground may already contain Terraform and the AWS CLI; verify them before installing anything.
 
@@ -67,7 +67,7 @@ export AWS_REGION="us-east-1"
 aws configure set region "$AWS_REGION"
 ```
 
-### Task 2 — Obtain KodeKey credentials and prepare the published images
+### Task 2 - Obtain KodeKey credentials and prepare the published images
 
 Open [KodeKey](https://kodekloud.com/ai-playgrounds/kodekey), choose **Launch now**, then **Start Playground**. Copy the displayed **Base URL** and **API Key**. Keep the key in a shell variable and do not paste it into a public source file.
 
@@ -87,7 +87,7 @@ docker pull kodekloud/nova:latest
 docker pull kodekloud/nova:searxng
 ```
 
-### Task 3 — Define Terraform providers, variables, secrets, and the public/private network
+### Task 3 - Define Terraform providers, variables, secrets, and the public/private network
 
 Create the foundational Terraform files. The generated `terraform.tfvars` stays local and is ignored by Git.
 
@@ -110,7 +110,7 @@ aws iam list-roles \
 
 > 📄 **[`secrets.tf`](./secrets.tf)**
 
-### Task 4 — Create ECR, IAM, security groups, ALB, RDS, ECS, and outputs
+### Task 4 - Create ECR, IAM, security groups, ALB, RDS, ECS, and outputs
 
 Add the remaining Terraform resources. This stage defines the full AWS dependency graph but does not yet build or publish images.
 
@@ -124,13 +124,13 @@ Add the remaining Terraform resources. This stage defines the full AWS dependenc
 
 > 📄 **[`alb.tf`](./alb.tf)**
 
-### Task 5 — Initialize ECR, retag both images, and push them
+### Task 5 - Initialize ECR, retag both images, and push them
 
 Create the ECR repositories first, then authenticate Docker to the AWS account. Retag the two published Docker Hub images and push them to ECR. Do not rebuild the images locally.
 
 > 📄 **[`script-2.sh`](./script-2.sh)**
 
-### Task 6 — Define the ECS task and deploy the three-tier stack
+### Task 6 - Define the ECS task and deploy the three-tier stack
 
 Create the ECS resources and connect the pushed images to the task definition. ECS runs in the dedicated private application subnets without public IPs; the public ALB reaches it internally, and the NAT Gateway provides outbound access. The task definition injects sensitive values with Secrets Manager ARNs and keeps model routing values as ordinary configuration.
 
@@ -156,7 +156,7 @@ aws ecs wait services-stable \
   --services prod-ecs-service
 ```
 
-### Task 7 — Validate the deployment and security boundaries
+### Task 7 - Validate the deployment and security boundaries
 
 Wait for the ECS service to become stable, then test the public endpoint, registry state, secret names, and private database DNS record.
 
