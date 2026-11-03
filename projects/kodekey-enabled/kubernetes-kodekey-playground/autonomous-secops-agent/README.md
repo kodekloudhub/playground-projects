@@ -1,4 +1,4 @@
-# Autonomous SecOps Agent for Log Anomaly Detection
+# AI Security Log Monitor
 
 ## Project info
 

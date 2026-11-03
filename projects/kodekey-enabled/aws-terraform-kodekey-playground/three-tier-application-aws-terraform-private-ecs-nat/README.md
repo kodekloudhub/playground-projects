@@ -1,4 +1,4 @@
-# AWS Three Tier Application with Terraform
+# AWS 3-Tier App (Terraform)
 
 ## Project info
 

@@ -1,4 +1,4 @@
-# Type-Safe Financial Extraction Engine
+# AI Financial Data Extractor
 
 ## Project info
 
